@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/currentLocation">
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.weatherforecast.location.view.MapsFragment"
+        android:label="MapsFragment">
+        <action
+            android:id="@+id/action_mapsFragment_to_currentLocation"
+            app:destination="@id/currentLocation" />
+    </fragment>
+    <fragment
+        android:id="@+id/currentLocation"
+        android:name="com.example.weatherforecast.location.view.CurrentLocation"
+        android:label="fragment_current_location"
+        tools:layout="@layout/fragment_current_location">
+        <action
+            android:id="@+id/action_currentLocation_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+        <action
+            android:id="@+id/action_currentLocation_to_favouritesFragment"
+            app:destination="@id/favouritesFragment" />
+        <action
+            android:id="@+id/action_currentLocation_to_alertFragment"
+            app:destination="@id/alertFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.example.weatherforecast.favouritePlaces.view.FavouritesFragment"
+        android:label="fragment_favourites"
+        tools:layout="@layout/fragment_favourites" />
+    <fragment
+        android:id="@+id/alertFragment"
+        android:name="com.example.weatherforecast.AlertFragment"
+        android:label="fragment_alert"
+        tools:layout="@layout/fragment_alert" />
+</navigation>
