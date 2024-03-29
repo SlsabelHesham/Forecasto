@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +35,10 @@ import com.example.weatherforecast.databinding.FragmentAlertBinding
 import com.example.weatherforecast.dp.LocationLocalDataSourceImplementation
 import com.example.weatherforecast.model.Alert
 import com.example.weatherforecast.model.LocationRepositoryImplementation
+import com.example.weatherforecast.model.AlertState
 import com.example.weatherforecast.network.LocationRemoteDataSourceImplementation
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -167,9 +171,26 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
             val radioButton: RadioButton? = view?.findViewById(checkedId)
             typeOfAlarm = radioButton?.text.toString()
         }
-
+        /*
         alertsViewModel.alerts.observe(this) { alerts ->
             alertsAdapter.submitList(alerts)
+        }
+        */
+        lifecycleScope.launch {
+            alertsViewModel.alerts.collectLatest {result ->
+                when(result){
+                    is AlertState.Loading -> {
+                        //binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is AlertState.Success -> {
+                        //binding.progressBar.visibility = View.GONE
+                        alertsAdapter.submitList(result.data)
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
 
         binding.saveBtn.setOnClickListener {

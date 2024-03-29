@@ -3,6 +3,7 @@ package com.example.weatherforecast.dp
 import android.content.Context
 import com.example.weatherforecast.model.Alert
 import com.example.weatherforecast.model.FavouriteLocation
+import kotlinx.coroutines.flow.Flow
 
 class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDataSource {
     private val dao: LocationDAO by lazy {
@@ -10,7 +11,7 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         db.getPlaceDAO()
     }
 
-    override suspend fun getStoredPlaces(): List<FavouriteLocation> {
+    override suspend fun getStoredPlaces(): Flow<List<FavouriteLocation>> {
         return dao.getAllPlaces()
     }
 
@@ -22,7 +23,7 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         dao.deletePlace(favouriteLocation)
     }
 
-    override suspend fun getStoredAlerts(): List<Alert> {
+    override suspend fun getStoredAlerts(): Flow<List<Alert>> {
         return dao.getAllAlerts()
     }
 

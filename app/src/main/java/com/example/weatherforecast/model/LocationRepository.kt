@@ -1,16 +1,18 @@
 package com.example.weatherforecast.model
 
+import kotlinx.coroutines.flow.Flow
+
 interface LocationRepository {
 
-    suspend fun getLocationDetails(latitude: Double , longitude: Double, units: String, lang: String): WeatherApiResponse?
+    suspend fun getLocationDetails(latitude: Double , longitude: Double, units: String, lang: String): Flow<WeatherApiResponse?>
 
-    suspend fun getStoredPlaces(): List<FavouriteLocation>
+    suspend fun getStoredPlaces(): Flow<List<FavouriteLocation>>
 
     suspend fun insertPlace(favouriteLocation: FavouriteLocation)
 
     suspend fun deletePlace(favouriteLocation: FavouriteLocation)
 
-    suspend fun getStoredAlerts(): List<Alert>
+    suspend fun getStoredAlerts(): Flow<List<Alert>>
 
     suspend fun insertAlert(alert: Alert): Long
 

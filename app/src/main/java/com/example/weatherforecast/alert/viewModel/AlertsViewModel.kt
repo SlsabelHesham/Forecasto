@@ -6,15 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.model.Alert
 import com.example.weatherforecast.model.LocationRepository
+import com.example.weatherforecast.model.AlertState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class AlertsViewModel(private val _irepo: LocationRepository) : ViewModel() {
     init {
         getStoredAlerts()
     }
-    private var _alerts: MutableLiveData<List<Alert>> = MutableLiveData<List<Alert>>()
-    val alerts: LiveData<List<Alert>> = _alerts
+    private var _alerts: MutableStateFlow<AlertState> = MutableStateFlow<AlertState>(AlertState.Loading)
+    val alerts: StateFlow<AlertState> = _alerts
 
     private val _lastInsertedId = MutableLiveData<Long>()
     val lastInsertedId: LiveData<Long> = _lastInsertedId
@@ -34,8 +38,13 @@ class AlertsViewModel(private val _irepo: LocationRepository) : ViewModel() {
 
     fun getStoredAlerts() {
         viewModelScope.launch(Dispatchers.IO) {
-            val alertsList = _irepo.getStoredAlerts()
-            _alerts.postValue(alertsList)
+            _irepo.getStoredAlerts()
+                .catch {e ->
+                    _alerts.value = AlertState.Failure(e)
+                }
+                .collect{ data ->
+                    _alerts.value = AlertState.Success(data)
+                }
         }
     }
 }

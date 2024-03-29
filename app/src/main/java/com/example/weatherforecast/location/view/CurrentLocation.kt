@@ -17,6 +17,7 @@ import android.view.View
 import android.view.View.LAYOUT_DIRECTION_LTR
 import android.view.View.LAYOUT_DIRECTION_RTL
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -34,6 +35,8 @@ import com.example.weatherforecast.location.viewModel.LocationViewModelFactory
 import com.example.weatherforecast.model.*
 import com.example.weatherforecast.network.LocationRemoteDataSourceImplementation
 import com.google.android.gms.location.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -89,14 +92,40 @@ class CurrentLocation : Fragment(){
         }
         binding.menu.setOnClickListener {
             val navController = Navigation.findNavController(context as Activity, R.id.fragmentNavHost)
-            //navController.navigateUp()
-            //activity?.finish()
             navController.  navigate(R.id.action_currentLocation_to_settingFragment)
         }
 
         if (arguments != null) {
             latitude = arguments?.getDouble("latitude") ?: 0.0
             longitude = arguments?.getDouble("longitude") ?: 0.0
+
+            val pair = getFromSP()
+            locationViewModelFactory = LocationViewModelFactory(
+                LocationRepositoryImplementation.getInstance(
+                    LocationRemoteDataSourceImplementation(),
+                    LocationLocalDataSourceImplementation(requireContext())
+                ) ,latitude , longitude, pair.first, pair.second)
+            locationViewModel = ViewModelProvider(this@CurrentLocation, locationViewModelFactory)[LocationViewModel::class.java]
+
+            Log.i("TAGss", "onLocationResult: $latitude $longitude")
+            Log.i("TAGss", "onLocationResult: ${pair.first} ${pair.second}")
+
+            lifecycleScope.launch {
+                locationViewModel.location.collectLatest {result ->
+                    when(result){
+                        is ApiState.Loading -> {
+                            //binding.progressBar.visibility = View.VISIBLE
+                        }
+                        is ApiState.Success -> {
+                            //binding.progressBar.visibility = View.GONE
+                            setUpUI(result.data?.list ?: listOf(), result.data?.city?.name ?: "")
+                        }
+                        else -> {
+                            Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         } else {
             if (checkPermissions()) {
                 if (isLocationEnabled()) {
@@ -165,8 +194,6 @@ class CurrentLocation : Fragment(){
                     latitude = location?.latitude ?: 0.0
                     longitude = location?.longitude ?: 0.0
 
-
-
                     val pair = getFromSP()
                     locationViewModelFactory = LocationViewModelFactory(
                         LocationRepositoryImplementation.getInstance(
@@ -178,11 +205,29 @@ class CurrentLocation : Fragment(){
                     Log.i("TAGss", "onLocationResult: $latitude $longitude")
                     Log.i("TAGss", "onLocationResult: ${pair.first} ${pair.second}")
 
+                    /*
                    locationViewModel.location.observe(this@CurrentLocation) { myLocation ->
                        if (locationViewModel.location.value != null) {
                            setUpUI(myLocation.list, myLocation.city.name)
                        }
                    }
+                    */
+                    lifecycleScope.launch {
+                        locationViewModel.location.collectLatest {result ->
+                            when(result){
+                                is ApiState.Loading -> {
+                                    //binding.progressBar.visibility = View.VISIBLE
+                                }
+                                is ApiState.Success -> {
+                                    //binding.progressBar.visibility = View.GONE
+                                    setUpUI(result.data?.list ?: listOf(), result.data?.city?.name ?: "")
+                                }
+                                else -> {
+                                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    }
                 }
             },
             Looper.myLooper()
@@ -220,7 +265,7 @@ class CurrentLocation : Fragment(){
         //findNavController().
 
         //findNavController().navigate(R.id.settingFragment)
-        locationViewModel.location.removeObservers(this)
+        //locationViewModel.location.removeObservers(this)
         viewModelStore.clear()
         Log.i("TAGss", "onDestroyView: ")
     }
@@ -269,7 +314,7 @@ class CurrentLocation : Fragment(){
         Glide.with(this)
             .load("https://openweathermap.org/img/w/${location[0].weather[0].icon}.png")
             .into(binding.icon)
-        locationViewModel.location.removeObservers(this)
+        //locationViewModel.location.removeObservers(this)
         latitude = 0.0
         longitude = 0.0
     }
