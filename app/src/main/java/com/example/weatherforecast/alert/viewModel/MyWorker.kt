@@ -71,8 +71,8 @@ class MyWorker(private var context: Context , workerParameters: WorkerParameters
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val pendingIntent = NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.nav_graph) // Replace with your navigation graph
-            .setDestination(R.id.alertFragment) // Replace with the destination Fragment
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.alertFragment)
             .createPendingIntent()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
