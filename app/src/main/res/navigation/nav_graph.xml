@@ -11,6 +11,12 @@
         <action
             android:id="@+id/action_mapsFragment_to_currentLocation"
             app:destination="@id/currentLocation" />
+        <action
+            android:id="@+id/action_mapsFragment_to_favouritesFragment"
+            app:destination="@id/favouritesFragment" />
+        <action
+            android:id="@+id/action_mapsFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
     </fragment>
     <fragment
         android:id="@+id/currentLocation"
@@ -26,15 +32,41 @@
         <action
             android:id="@+id/action_currentLocation_to_alertFragment"
             app:destination="@id/alertFragment" />
+        <action
+            android:id="@+id/action_currentLocation_to_alertFragment2"
+            app:destination="@id/alertFragment" />
+        <action
+            android:id="@+id/action_currentLocation_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/favouritesFragment"
         android:name="com.example.weatherforecast.favouritePlaces.view.FavouritesFragment"
         android:label="fragment_favourites"
-        tools:layout="@layout/fragment_favourites" />
+        tools:layout="@layout/fragment_favourites" >
+        <action
+            android:id="@+id/action_favouritesFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+        <action
+            android:id="@+id/action_favouritesFragment_to_currentLocation"
+            app:destination="@id/currentLocation" />
+    </fragment>
     <fragment
         android:id="@+id/alertFragment"
-        android:name="com.example.weatherforecast.AlertFragment"
+        android:name="com.example.weatherforecast.alert.view.AlertFragment"
         android:label="fragment_alert"
-        tools:layout="@layout/fragment_alert" />
+        tools:layout="@layout/fragment_alert" >
+        <action
+            android:id="@+id/action_alertFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.weatherforecast.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_currentLocation"
+            app:destination="@id/currentLocation" />
+    </fragment>
 </navigation>

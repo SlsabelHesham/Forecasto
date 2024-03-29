@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">الطقس</string>
+    <string name="settings">الإعدادات</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="kelvin">كيلفن</string>
+    <string name="celsius">سيليزيوس</string>
+    <string name="fahrenheit">فاهرنهايت</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="ms">م/ث</string>
+    <string name="mh">م/ه</string>
+    <string name="language">اللغة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+</resources>

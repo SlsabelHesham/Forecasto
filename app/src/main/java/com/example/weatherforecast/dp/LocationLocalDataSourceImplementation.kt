@@ -1,7 +1,8 @@
 package com.example.weatherforecast.dp
 
 import android.content.Context
-import com.example.weatherforecast.model.LatLng
+import com.example.weatherforecast.model.Alert
+import com.example.weatherforecast.model.FavouriteLocation
 
 class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDataSource {
     private val dao: LocationDAO by lazy {
@@ -9,15 +10,37 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         db.getPlaceDAO()
     }
 
-    override suspend fun getStoredPlaces(): List<LatLng> {
+    override suspend fun getStoredPlaces(): List<FavouriteLocation> {
         return dao.getAllPlaces()
     }
 
-    override suspend fun insertPlace(latLng: LatLng) {
-        dao.insertPlace(latLng)
+    override suspend fun insertPlace(favouriteLocation: FavouriteLocation) {
+        dao.insertPlace(favouriteLocation)
     }
 
-    override suspend fun deletePlace(latLng: LatLng) {
-        dao.deletePlace(latLng)
+    override suspend fun deletePlace(favouriteLocation: FavouriteLocation) {
+        dao.deletePlace(favouriteLocation)
     }
+
+    override suspend fun getStoredAlerts(): List<Alert> {
+        return dao.getAllAlerts()
+    }
+
+    override suspend fun insertAlert(alert: Alert): Long {
+        return dao.insertAlert(alert)
+    }
+
+    override suspend fun deleteAlert(alert: Alert) {
+        dao.deleteAlert(alert)
+    }
+
+    override suspend fun getLastInsertedId(): Int? {
+        return dao.getLastInsertedId()
+    }
+
+    override fun getAlertById(id: Int): Alert? {
+        return dao.getAlertById(id)
+    }
+
+
 }

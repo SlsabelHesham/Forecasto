@@ -6,248 +6,144 @@
     android:layout_height="match_parent"
     android:background="@color/main_blue">
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="380dp"
-        android:layout_height="335dp"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/main_card"
-        android:elevation="15dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.9"
+        android:background="#6096B5D8"
+        android:elevation="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/cityNameTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="68dp"
-        android:elevation="15dp"
-        android:fontFamily="@font/aleo"
-        android:text="Alexandria"
-        android:textColor="@color/white"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toTopOf="@+id/view" />
-
-    <TextView
-        android:id="@+id/dateTimeTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="26dp"
-        android:elevation="15dp"
-        android:fontFamily="@font/aleo"
-        android:text="23/3/2024 -- 7:35 AM"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/cityNameTV"
-        app:layout_constraintStart_toStartOf="@+id/cityNameTV"
-        app:layout_constraintTop_toBottomOf="@+id/cityNameTV" />
-
-    <TextView
-        android:id="@+id/descriptionTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="53dp"
-        android:elevation="15dp"
-        android:fontFamily="@font/aleo"
-        android:text="Clear Sky"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/dateTimeTV"
-        app:layout_constraintStart_toStartOf="@+id/dateTimeTV"
-        app:layout_constraintTop_toBottomOf="@+id/dateTimeTV" />
-
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="169dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="11dp"
-        android:elevation="15dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionTV">
-
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="360dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@color/main_blue"
+            android:elevation="20dp"
+            app:cardBackgroundColor="@color/main_blue"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/tempTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/aleo"
-                    android:gravity="center"
-                    android:text="16"
-                    android:textColor="@color/white"
-                    android:textSize="48sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tempUnit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/aleo"
-                    android:text="°C"
-                    android:textColor="@color/white"
-                    android:textSize="48sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    app:srcCompat="@drawable/wind_speed" />
+                    android:id="@+id/imageView3"
+                    android:layout_width="43dp"
+                    android:layout_height="37dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/delete" />
 
                 <TextView
-                    android:id="@+id/windSpeed"
-                    android:layout_width="match_parent"
+                    android:id="@+id/cityNameTV2"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp"
                     android:fontFamily="@font/aleo"
-                    android:gravity="center"
-                    android:text="0.62 m/s"
+                    android:text="Alarm Setting"
                     android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cityNameTV2">
 
-        </LinearLayout>
+                    <EditText
+                        android:id="@+id/dateET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#FFFFFF" />
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/image1" />
-    </LinearLayout>
+                    <EditText
+                        android:id="@+id/timeET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#FFFFFF" />
+                </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/hoursRecyclerView"
-        android:layout_width="380dp"
-        android:layout_height="150dp"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="380dp"
-        android:layout_height="70dp"
-        android:background="@drawable/main_card"
-        android:elevation="15dp"
-        app:layout_constraintEnd_toEndOf="@+id/hoursRecyclerView"
-        app:layout_constraintStart_toStartOf="@+id/hoursRecyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/hoursRecyclerView" />
+                    <RadioButton
+                        android:id="@+id/notificationRBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/aleo"
+                        android:text="Notification"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="360dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginEnd="7dp"
-        android:elevation="15dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="@+id/view2">
+                    <RadioButton
+                        android:id="@+id/alarmRBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alarm"
+                        android:fontFamily="@font/aleo"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+                </RadioGroup>
 
-        <ImageView
-            android:id="@+id/cloudsIcon"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+                <Button
+                    android:id="@+id/saveBtn"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:height="60dp"
+                    android:backgroundTint="@color/button"
+                    android:fontFamily="@font/aleo"
+                    android:text="Save"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="25dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-        <TextView
-            android:id="@+id/clouds"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="-20dp"
-            android:layout_weight="2"
-            android:elevation="15dp"
-            android:fontFamily="@font/aleo"
-            android:gravity="center"
-            android:text="6.4m"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/humidityIcon"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
-
-        <TextView
-            android:id="@+id/humidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="-20dp"
-            android:layout_weight="1"
-            android:elevation="15dp"
-            android:fontFamily="@font/aleo"
-            android:gravity="center"
-            android:text="69ps"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/pressureIcon"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
-
-        <TextView
-            android:id="@+id/pressure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="-20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:elevation="15dp"
-            android:fontFamily="@font/aleo"
-            android:gravity="center"
-            android:text="5.3h"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

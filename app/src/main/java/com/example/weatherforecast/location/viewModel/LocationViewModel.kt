@@ -8,22 +8,16 @@ import com.example.weatherforecast.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LocationViewModel(private val _irepo: LocationRepository, latitude: Double, longitude: Double) : ViewModel() {
+class LocationViewModel(private val _irepo: LocationRepository, latitude: Double, longitude: Double, units: String, lang: String) : ViewModel() {
     init {
-        getLocationDetails(latitude , longitude)
+        getLocationDetails(latitude , longitude, units, lang)
     }
     private var _location: MutableLiveData<WeatherApiResponse> = MutableLiveData<WeatherApiResponse>()
     val location: LiveData<WeatherApiResponse> = _location
 
-    fun insertPlace(latLng: LatLng){
+     private fun getLocationDetails(latitude: Double, longitude: Double, units: String, lang: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _irepo.insertPlace(latLng)
-        }
-    }
-
-    private fun getLocationDetails(latitude: Double , longitude: Double) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val locationDetails = _irepo.getLocationDetails(latitude , longitude)
+            val locationDetails = _irepo.getLocationDetails(latitude , longitude, units, lang)
             _location.postValue(locationDetails)
         }
     }

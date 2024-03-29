@@ -1,12 +1,23 @@
 package com.example.weatherforecast.dp
 
-import com.example.weatherforecast.model.LatLng
+import com.example.weatherforecast.model.Alert
+import com.example.weatherforecast.model.FavouriteLocation
+
 
 interface LocationLocalDataSource {
+    suspend fun getStoredPlaces(): List<FavouriteLocation>
 
-    suspend fun getStoredPlaces(): List<LatLng>
+    suspend fun insertPlace(favouriteLocation: FavouriteLocation)
 
-    suspend fun insertPlace(latLng: LatLng)
+    suspend fun deletePlace(favouriteLocation: FavouriteLocation)
 
-    suspend fun deletePlace(latLng: LatLng)
+    suspend fun getStoredAlerts(): List<Alert>
+
+    suspend fun insertAlert(alert: Alert): Long
+
+    suspend fun deleteAlert(alert: Alert)
+
+    suspend fun getLastInsertedId(): Int?
+
+    fun getAlertById(id: Int): Alert?
 }

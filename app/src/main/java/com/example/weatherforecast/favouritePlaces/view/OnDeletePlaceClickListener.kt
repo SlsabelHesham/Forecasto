@@ -1,8 +1,9 @@
 package com.example.weatherforecast.favouritePlaces.view
 
-import com.example.weatherforecast.model.LatLng
+import com.example.weatherforecast.model.FavouriteLocation
+
 
 interface OnDeletePlaceClickListener {
-    fun onDeletePlaceClick(latLng: LatLng)
+    fun onDeletePlaceClick(favouriteLocation: FavouriteLocation)
 }
 

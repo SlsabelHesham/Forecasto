@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.weatherforecast.model.LatLng
+import com.example.weatherforecast.model.Alert
+import com.example.weatherforecast.model.FavouriteLocation
 
-@Database(entities = [LatLng::class], version = 1)
+@Database(entities = [FavouriteLocation::class , Alert::class], version = 1)
 abstract class LocationDatabase : RoomDatabase() {
 
     abstract fun getPlaceDAO(): LocationDAO
