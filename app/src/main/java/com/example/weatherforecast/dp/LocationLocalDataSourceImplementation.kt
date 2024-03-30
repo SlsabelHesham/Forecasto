@@ -35,10 +35,6 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         dao.deleteAlert(alert)
     }
 
-    override suspend fun getLastInsertedId(): Int? {
-        return dao.getLastInsertedId()
-    }
-
     override fun getAlertById(id: Int): Alert? {
         return dao.getAlertById(id)
     }

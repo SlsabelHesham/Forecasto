@@ -16,6 +16,11 @@ interface LocationDAO {
     @Delete
     fun deletePlace(favouriteLocation: FavouriteLocation)
 
+    @Query("SELECT * FROM places_table WHERE id = :id")
+    suspend fun getPlaceById(id: Int): FavouriteLocation?
+
+
+
     @Query("SELECT * FROM alerts_table")
     fun getAllAlerts(): Flow<List<Alert>>
 
@@ -24,9 +29,6 @@ interface LocationDAO {
 
     @Delete
     fun deleteAlert(alert: Alert)
-
-    @Query("SELECT id FROM alerts_table ORDER BY id DESC")
-    fun getLastInsertedId(): Int?
 
     @Query("SELECT * FROM alerts_table WHERE id = :id")
     fun getAlertById(id: Int): Alert?

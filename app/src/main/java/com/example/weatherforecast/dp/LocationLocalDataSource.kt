@@ -18,7 +18,5 @@ interface LocationLocalDataSource {
 
     suspend fun deleteAlert(alert: Alert)
 
-    suspend fun getLastInsertedId(): Int?
-
     fun getAlertById(id: Int): Alert?
 }

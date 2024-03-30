@@ -50,11 +50,6 @@ class LocationRepositoryImplementation private constructor(
     override suspend fun deleteAlert(alert: Alert) {
         locationLocalDataSource.deleteAlert(alert)
     }
-
-    override suspend fun getLastInsertedId(): Int? {
-        return locationLocalDataSource.getLastInsertedId()
-    }
-
     override fun getAlertById(id: Int): Alert? {
         return locationLocalDataSource.getAlertById(id)
     }

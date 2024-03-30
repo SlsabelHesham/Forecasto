@@ -13,11 +13,7 @@ interface LocationRepository {
     suspend fun deletePlace(favouriteLocation: FavouriteLocation)
 
     suspend fun getStoredAlerts(): Flow<List<Alert>>
-
     suspend fun insertAlert(alert: Alert): Long
-
     suspend fun deleteAlert(alert: Alert)
-
-    suspend fun getLastInsertedId(): Int?
     fun getAlertById(id: Int): Alert?
 }
