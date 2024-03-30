@@ -23,6 +23,11 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         dao.deletePlace(favouriteLocation)
     }
 
+    override suspend fun getPlaceById(id: Int): FavouriteLocation? {
+        return dao.getPlaceById(id)
+    }
+
+
     override suspend fun getStoredAlerts(): Flow<List<Alert>> {
         return dao.getAllAlerts()
     }
@@ -35,7 +40,7 @@ class LocationLocalDataSourceImplementation (context: Context) : LocationLocalDa
         dao.deleteAlert(alert)
     }
 
-    override fun getAlertById(id: Int): Alert? {
+    override suspend fun getAlertById(id: Int): Alert? {
         return dao.getAlertById(id)
     }
 

@@ -15,5 +15,5 @@ interface LocationRepository {
     suspend fun getStoredAlerts(): Flow<List<Alert>>
     suspend fun insertAlert(alert: Alert): Long
     suspend fun deleteAlert(alert: Alert)
-    fun getAlertById(id: Int): Alert?
+    suspend fun getAlertById(id: Int): Alert?
 }
