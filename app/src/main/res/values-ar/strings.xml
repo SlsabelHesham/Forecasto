@@ -8,8 +8,11 @@
     <string name="fahrenheit">فاهرنهايت</string>
     <string name="wind_speed">سرعة الرياح</string>
     <string name="ms">م/ث</string>
-    <string name="mh">م/ه</string>
+    <string name="mh">م/س</string>
     <string name="language">اللغة</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="my_favourites">تفضيلاتي</string>
+    <string name="map">الخريطة</string>
 </resources>

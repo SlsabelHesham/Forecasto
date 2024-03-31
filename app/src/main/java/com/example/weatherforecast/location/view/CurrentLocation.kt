@@ -5,17 +5,15 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.LAYOUT_DIRECTION_LTR
-import android.view.View.LAYOUT_DIRECTION_RTL
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -25,7 +23,6 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.utils.Constants.LANG_ARABIC
 import com.example.weatherforecast.utils.Constants.LANG_ENGLISH
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentCurrentLocationBinding
@@ -34,16 +31,16 @@ import com.example.weatherforecast.location.viewModel.LocationViewModel
 import com.example.weatherforecast.location.viewModel.LocationViewModelFactory
 import com.example.weatherforecast.model.*
 import com.example.weatherforecast.network.LocationRemoteDataSourceImplementation
+import com.example.weatherforecast.settings.view.SettingFragment
+import com.example.weatherforecast.utils.Constants.LANG_ARABIC
 import com.google.android.gms.location.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 class CurrentLocation : Fragment(){
     private lateinit var locationViewModelFactory: LocationViewModelFactory
     private lateinit var locationViewModel: LocationViewModel
-
 
     private lateinit var hoursOfDayAdapter: HoursOfDayAdapter
     private lateinit var daysOfWeekAdapter: DaysOfWeekAdapter
@@ -58,18 +55,21 @@ class CurrentLocation : Fragment(){
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val requestLocationCode = 3838
+    private var appLanguage: String = ""
+    private var appUnits: String = ""
+
+    private var preferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentCurrentLocationBinding.inflate(inflater, container, false)
 
-        if(getFromSP().second == "ar"){
-            updateAppLanguage(LANG_ARABIC, LAYOUT_DIRECTION_RTL)
-        }else{
-            updateAppLanguage(LANG_ENGLISH, LAYOUT_DIRECTION_LTR)
-        }
+        getPreferences()
+        setAppLanguage()
+        observeAppLanguage()
 
         hoursLayoutManager = LinearLayoutManager(context)
         hoursLayoutManager.orientation = RecyclerView.HORIZONTAL
@@ -86,10 +86,12 @@ class CurrentLocation : Fragment(){
             layoutManager = daysLayoutManager
             adapter = daysOfWeekAdapter
         }
+
         binding.mapLocation.setOnClickListener{
             val navController = Navigation.findNavController(context as Activity , R.id.fragmentNavHost)
             navController.navigate(R.id.action_currentLocation_to_mapsFragment)
         }
+
         binding.menu.setOnClickListener {
             val navController = Navigation.findNavController(context as Activity, R.id.fragmentNavHost)
             navController.  navigate(R.id.action_currentLocation_to_settingFragment)
@@ -98,35 +100,10 @@ class CurrentLocation : Fragment(){
         if (arguments != null) {
             latitude = arguments?.getDouble("latitude") ?: 0.0
             longitude = arguments?.getDouble("longitude") ?: 0.0
-
-            val pair = getFromSP()
-            locationViewModelFactory = LocationViewModelFactory(
-                LocationRepositoryImplementation.getInstance(
-                    LocationRemoteDataSourceImplementation(),
-                    LocationLocalDataSourceImplementation(requireContext())
-                ) ,latitude , longitude, pair.first, pair.second)
-            locationViewModel = ViewModelProvider(this@CurrentLocation, locationViewModelFactory)[LocationViewModel::class.java]
-
-            Log.i("TAGss", "onLocationResult: $latitude $longitude")
-            Log.i("TAGss", "onLocationResult: ${pair.first} ${pair.second}")
-
-            lifecycleScope.launch {
-                locationViewModel.location.collectLatest {result ->
-                    when(result){
-                        is ApiState.Loading -> {
-                            //binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is ApiState.Success -> {
-                            //binding.progressBar.visibility = View.GONE
-                            setUpUI(result.data?.list ?: listOf(), result.data?.city?.name ?: "")
-                        }
-                        else -> {
-                            Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        } else {
+            initViewModel()
+            checkApiState()
+        }
+        else {
             if (checkPermissions()) {
                 if (isLocationEnabled()) {
                     getFreshLocation()
@@ -145,11 +122,58 @@ class CurrentLocation : Fragment(){
         }
         return binding.root
     }
-    private fun getFromSP() : Pair<String, String>{
-    val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
-    val unitSP = preferences?.getString("temperature", "")
-    val langSP = preferences?.getString("language", "")
-    return Pair(unitSP.toString(), langSP.toString())
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelStore.clear()
+    }
+    private fun observeAppLanguage(){
+        lifecycleScope.launch {
+            SettingFragment.AppLanguageManager.selectedLanguage.collect { language ->
+                if (language == LANG_ENGLISH) {
+                    updateAppLanguage(language, View.LAYOUT_DIRECTION_LTR)
+                } else {
+                    updateAppLanguage(language, View.LAYOUT_DIRECTION_RTL)
+                }
+                appLanguage = language
+                editor?.putString("language", language)
+            }
+        }
+    }
+    private fun getPreferences(){
+        preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        editor = preferences?.edit()
+        appLanguage = preferences?.getString("language", "").toString()
+        appUnits = preferences?.getString("unit", "").toString()
+    }
+    private fun setAppLanguage(){
+        if(appLanguage == "ar")
+            updateAppLanguage(LANG_ARABIC, View.LAYOUT_DIRECTION_RTL)
+    }
+    private fun checkApiState(){
+        lifecycleScope.launch {
+            locationViewModel.location.collectLatest {result ->
+                when(result){
+                    is ApiState.Loading -> {
+                        //binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is ApiState.Success -> {
+                        //binding.progressBar.visibility = View.GONE
+                        setUpUI(result.data?.list ?: listOf(), result.data?.city?.name ?: "")
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+    private fun initViewModel(){
+        locationViewModelFactory = LocationViewModelFactory(
+            LocationRepositoryImplementation.getInstance(
+                LocationRemoteDataSourceImplementation(),
+                LocationLocalDataSourceImplementation(requireContext())
+            ) ,latitude , longitude, appUnits, appLanguage)
+        locationViewModel = ViewModelProvider(this@CurrentLocation, locationViewModelFactory)[LocationViewModel::class.java]
     }
     private fun updateAppLanguage(language: String, direction: Int) {
         val locale = Locale(language)
@@ -172,7 +196,6 @@ class CurrentLocation : Fragment(){
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED)
     }
-
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
             requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -193,63 +216,19 @@ class CurrentLocation : Fragment(){
                     fusedLocationProviderClient.removeLocationUpdates(this)
                     latitude = location?.latitude ?: 0.0
                     longitude = location?.longitude ?: 0.0
-
-                    val pair = getFromSP()
-                    locationViewModelFactory = LocationViewModelFactory(
-                        LocationRepositoryImplementation.getInstance(
-                            LocationRemoteDataSourceImplementation(),
-                            LocationLocalDataSourceImplementation(requireContext())
-                        ) ,latitude , longitude, pair.first, pair.second)
-                    locationViewModel = ViewModelProvider(this@CurrentLocation, locationViewModelFactory)[LocationViewModel::class.java]
-
-                    Log.i("TAGss", "onLocationResult: $latitude $longitude")
-                    Log.i("TAGss", "onLocationResult: ${pair.first} ${pair.second}")
-
-                    /*
-                   locationViewModel.location.observe(this@CurrentLocation) { myLocation ->
-                       if (locationViewModel.location.value != null) {
-                           setUpUI(myLocation.list, myLocation.city.name)
-                       }
-                   }
-                    */
-                    lifecycleScope.launch {
-                        locationViewModel.location.collectLatest {result ->
-                            when(result){
-                                is ApiState.Loading -> {
-                                    //binding.progressBar.visibility = View.VISIBLE
-                                }
-                                is ApiState.Success -> {
-                                    //binding.progressBar.visibility = View.GONE
-                                    setUpUI(result.data?.list ?: listOf(), result.data?.city?.name ?: "")
-                                }
-                                else -> {
-                                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
+                    initViewModel()
+                    checkApiState()
                 }
             },
             Looper.myLooper()
         )
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("TAGss", "onDestroy: ")
     }
     private fun enableLocationServices() {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
     }
-
     @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == requestLocationCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -257,19 +236,6 @@ class CurrentLocation : Fragment(){
             }
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        //locationViewModel.location.removeObservers(this@CurrentLocation)
-        //locationViewModel.location.removeObservers(this@CurrentLocation)
-        //findNavController().
-
-        //findNavController().navigate(R.id.settingFragment)
-        //locationViewModel.location.removeObservers(this)
-        viewModelStore.clear()
-        Log.i("TAGss", "onDestroyView: ")
-    }
-
     @SuppressLint("SetTextI18n")
     private fun setUpUI(location: List<WeatherItem>, city: String){
         hoursOfDayAdapter.submitList(location.subList(0 ,7))
@@ -303,18 +269,13 @@ class CurrentLocation : Fragment(){
         else{
             binding.dateTimeTV.text = "$day/$month/$year -- $hour:$minute $amPm"
         }
-
-
         binding.descriptionTV.text = location[0].weather[0].description
         binding.tempTV.text = location[0].main.temp.toString()
         binding.windSpeed.text = location[0].wind.speed.toString()
         binding.humidity.text = location[0].main.humidity.toString()
         binding.clouds.text = location[0].clouds.all.toString()
         binding.pressure.text = location[0].main.pressure.toString()
-        Glide.with(this)
-            .load("https://openweathermap.org/img/w/${location[0].weather[0].icon}.png")
-            .into(binding.icon)
-        //locationViewModel.location.removeObservers(this)
+        Glide.with(this).load("https://openweathermap.org/img/w/${location[0].weather[0].icon}.png").into(binding.icon)
         latitude = 0.0
         longitude = 0.0
     }

@@ -11,4 +11,7 @@
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
+    <string name="alerts">Alerts</string>
+    <string name="my_favourites">My Favourites</string>
+    <string name="map">Map</string>
 </resources>

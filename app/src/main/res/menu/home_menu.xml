@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--android:icon="@drawable/user"-->
+    <item
+        android:id="@+id/alertFragment"
+        android:title="@string/alerts" />
+    <item
+        android:id="@+id/favouritesFragment"
+        android:title="@string/my_favourites" />
+
+    <item
+        android:id="@+id/mapsFragment"
+        android:title="@string/map" />
+    <item
+        android:id="@+id/settingFragment"
+        android:title="@string/settings" />
+</menu>
