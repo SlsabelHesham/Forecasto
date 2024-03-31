@@ -11,6 +11,7 @@ interface LocationRepository {
     suspend fun insertPlace(favouriteLocation: FavouriteLocation)
 
     suspend fun deletePlace(favouriteLocation: FavouriteLocation)
+    suspend fun getPlaceById(id: Int): FavouriteLocation?
 
     suspend fun getStoredAlerts(): Flow<List<Alert>>
     suspend fun insertAlert(alert: Alert): Long

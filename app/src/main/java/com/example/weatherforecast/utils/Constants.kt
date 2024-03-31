@@ -1,4 +1,4 @@
-package com.example.weatherforecast
+package com.example.weatherforecast.utils
 
 object Constants {
     const val WEATHER_ALERT = "WeatherAlert"

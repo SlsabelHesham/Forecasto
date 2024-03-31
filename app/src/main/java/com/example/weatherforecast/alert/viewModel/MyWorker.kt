@@ -13,7 +13,7 @@ import androidx.navigation.NavDeepLinkBuilder
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.example.weatherforecast.Constants
+import com.example.weatherforecast.utils.Constants
 import com.example.weatherforecast.MainActivity
 import com.example.weatherforecast.R
 import com.example.weatherforecast.dp.LocationLocalDataSourceImplementation

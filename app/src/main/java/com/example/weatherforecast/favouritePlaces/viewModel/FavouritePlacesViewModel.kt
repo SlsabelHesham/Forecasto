@@ -16,7 +16,7 @@ class FavouritePlacesViewModel(private val _irepo: LocationRepository) : ViewMod
     init {
         getStoredPlaces()
     }
-    private var _places: MutableStateFlow<PlacesState> = MutableStateFlow<PlacesState>(PlacesState.Loading)
+    private var _places: MutableStateFlow<PlacesState> = MutableStateFlow(PlacesState.Loading)
     val places: StateFlow<PlacesState> = _places
 
     fun deletePlace(favouriteLocation: FavouriteLocation){
@@ -31,7 +31,7 @@ class FavouritePlacesViewModel(private val _irepo: LocationRepository) : ViewMod
         }
     }
 
-    private fun getStoredPlaces() {
+    fun getStoredPlaces() {
         viewModelScope.launch(Dispatchers.IO) {
             _irepo.getStoredPlaces()
                 .catch { e ->

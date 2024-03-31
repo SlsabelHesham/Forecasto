@@ -1,4 +1,4 @@
-package com.example.weatherforecast
+package com.example.weatherforecast.settings.view
 
 import android.content.Context
 import android.content.res.Configuration
@@ -9,8 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.lifecycle.lifecycleScope
-import com.example.weatherforecast.Constants.LANG_ARABIC
-import com.example.weatherforecast.Constants.LANG_ENGLISH
+import com.example.weatherforecast.utils.Constants.LANG_ARABIC
+import com.example.weatherforecast.utils.Constants.LANG_ENGLISH
+import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

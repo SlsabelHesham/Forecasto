@@ -4,7 +4,7 @@ import com.example.weatherforecast.dp.LocationLocalDataSource
 import com.example.weatherforecast.network.LocationRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class LocationRepositoryImplementation private constructor(
+class LocationRepositoryImplementation constructor(
     private var locationRemoteDataSource: LocationRemoteDataSource,
     private var locationLocalDataSource: LocationLocalDataSource
 ): LocationRepository {
@@ -32,11 +32,15 @@ class LocationRepositoryImplementation private constructor(
     }
 
     override suspend fun insertPlace(favouriteLocation: FavouriteLocation) {
-        locationLocalDataSource.insertPlace(favouriteLocation)
+        return locationLocalDataSource.insertPlace(favouriteLocation)
     }
 
     override suspend fun deletePlace(favouriteLocation: FavouriteLocation) {
         locationLocalDataSource.deletePlace(favouriteLocation)
+    }
+
+    override suspend fun getPlaceById(id: Int): FavouriteLocation? {
+        return locationLocalDataSource.getPlaceById(id)
     }
 
     override suspend fun getStoredAlerts(): Flow<List<Alert>> {

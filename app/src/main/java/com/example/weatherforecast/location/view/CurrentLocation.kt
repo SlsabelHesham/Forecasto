@@ -25,8 +25,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.Constants.LANG_ARABIC
-import com.example.weatherforecast.Constants.LANG_ENGLISH
+import com.example.weatherforecast.utils.Constants.LANG_ARABIC
+import com.example.weatherforecast.utils.Constants.LANG_ENGLISH
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentCurrentLocationBinding
 import com.example.weatherforecast.dp.LocationLocalDataSourceImplementation
