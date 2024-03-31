@@ -49,7 +49,9 @@
             app:destination="@id/mapsFragment" />
         <action
             android:id="@+id/action_favouritesFragment_to_currentLocation"
-            app:destination="@id/currentLocation" />
+            app:destination="@id/currentLocation"
+            app:popUpTo="@id/alertFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/alertFragment"

@@ -2,15 +2,19 @@ package com.example.weatherforecast.favouritePlaces.view
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -94,6 +98,21 @@ class FavouritesFragment : Fragment(), OnDeletePlaceClickListener {
                 }
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override
+                fun handleOnBackPressed() {
+
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(findNavController().graph.getStartDestination(), false)
+                        .setLaunchSingleTop(true)
+                        .build()
+                    findNavController().navigate(R.id.action_favouritesFragment_to_currentLocation, null, navOptions)
+
+                }
+            })
         return binding.root
     }
 
