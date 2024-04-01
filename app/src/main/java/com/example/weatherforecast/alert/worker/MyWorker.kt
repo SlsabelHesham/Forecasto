@@ -1,4 +1,4 @@
-package com.example.weatherforecast.alert.viewModel
+package com.example.weatherforecast.alert.worker
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -14,7 +14,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.weatherforecast.utils.Constants
-import com.example.weatherforecast.MainActivity
+import com.example.weatherforecast.NotificationActivity
 import com.example.weatherforecast.R
 import com.example.weatherforecast.dp.LocationLocalDataSourceImplementation
 import com.example.weatherforecast.model.LocationRepository
@@ -36,31 +36,68 @@ class MyWorker(private var context: Context , workerParameters: WorkerParameters
         LocationLocalDataSourceImplementation(context)
     )
 
-    private var mediaPlayer: MediaPlayer? = null
 
     override suspend fun doWork(): Result {
         val apiInstance = RetrofitHelper.retrofitInstance.create(WeatherService::class.java)
         val result = apiInstance.getWeatherForecast(latitude, longitude, "f11bd02e0587e48316013cf38a998f56", units.toString(), lang.toString())
         if (result.isSuccessful) {
             Log.i("TAG", "doWork: ")
-            mediaPlayer = MediaPlayer.create(context, R.raw.notification)
 
-            mediaPlayer?.start()
-            createNotification(context , result.body()?.list?.get(0)?.weather?.get(0)?.main ?: "not found")
             val alert = repo.getAlertById(id)
+            //createNotification(context , result.body()?.list?.get(0)?.weather?.get(0)?.main ?: "not found")
+            val city = result.body()?.city?.name
+            val date = alert?.date
+            val time = alert?.time
+            val condition = result.body()?.list?.get(0)?.weather?.get(0)?.main
+            val description = result.body()?.list?.get(0)?.weather?.get(0)?.description
+
+            showAlertDialog(context, city, date, time, condition, description)
+
+           // val intentt = Intent(this.context, NotificationActivity::class.java)
+           // context.startActivity(intentt)
+
             if (alert != null) {
                 repo.deleteAlert(alert)
             }
 
-            val intent = Intent(context, MainActivity::class.java).apply {
+            /*val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            context.startActivity(intent)
-            context.startActivity(intent)
+            }*/
+            //context.startActivity(intent)
+            //context.startActivity(intent)
             Log.i("TAG", "doWork: after")
         }
         return Result.success(workDataOf(Constants.WEATHER_ALERT to result.body()!!.list[0].weather[0].main))
     }
+    fun showAlertDialog(context: Context, city: String?, date: String?, time: String?, condition: String?, description: String?) {
+        Log.i("TAGss", "showAlertDialog: 1")
+        val intent = Intent(context, NotificationActivity::class.java).apply {
+            Log.i("TAGss", "showAlertDialog: 2")
+            putExtra("city", city)
+            putExtra("date", date)
+            putExtra("time", time)
+            putExtra("condition", condition)
+            putExtra("description", description)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        //val intent = Intent(context, NotificationActivity::class.java)
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE // or PendingIntent.FLAG_MUTABLE if needed
+        )
+        try {
+            pendingIntent.send()
+        } catch (e: PendingIntent.CanceledException) {
+            Log.e("TAGss", "Error sending PendingIntent: $e")
+        }
+        Log.i("TAGss", "showAlertDialog: 3")
+        //context.startActivity(intent)
+        Log.i("TAGss", "showAlertDialog: 4")
+    }
+
 
     @SuppressLint("RemoteViewLayout")
     fun createNotification(context: Context, alert: String): NotificationCompat.Builder {

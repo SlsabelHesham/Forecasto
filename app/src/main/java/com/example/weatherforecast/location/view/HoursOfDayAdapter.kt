@@ -38,12 +38,20 @@ class HoursOfDayAdapter(private val context: Context?): ListAdapter<WeatherItem,
         holder.binding.tempTV.text = currentLocation.main.temp.toString()
         holder.binding.hourTV.text = "$hour $amPm"
 
+        /*
         if (context != null) {
             Glide.with(context)
                 .load("https://openweathermap.org/img/w/${currentLocation.weather[0].icon}.png")
                 .into(holder.binding.imageView)
-        }
+        }*/
+        val char = (currentLocation.weather[0].icon)[2]
+        val imageName: String =  char + currentLocation.weather[0].icon
 
+        val imageResource = context?.resources?.getIdentifier(imageName, "drawable", context.packageName)
+
+        if (imageResource != null) {
+            holder.binding.imageView.setImageResource(imageResource)
+        }
     }
 
     class LocationViewHolder(var binding: HoursOfDayLayoutBinding) : RecyclerView.ViewHolder(binding.root)

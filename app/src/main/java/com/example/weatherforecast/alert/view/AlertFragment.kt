@@ -21,14 +21,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.example.weatherforecast.alert.viewModel.MyWorker
+import com.example.weatherforecast.alert.worker.MyWorker
 import com.example.weatherforecast.R
 import com.example.weatherforecast.alert.viewModel.AlertsViewModel
 import com.example.weatherforecast.alert.viewModel.AlertsViewModelFactory

@@ -275,7 +275,16 @@ class CurrentLocation : Fragment(){
         binding.humidity.text = location[0].main.humidity.toString()
         binding.clouds.text = location[0].clouds.all.toString()
         binding.pressure.text = location[0].main.pressure.toString()
-        Glide.with(this).load("https://openweathermap.org/img/w/${location[0].weather[0].icon}.png").into(binding.icon)
+
+        //Glide.with(this).load("https://openweathermap.org/img/w/${location[0].weather[0].icon}.png").into(binding.icon)
+        val char = (location[0].weather[0].icon)[2]
+        val imageName: String =  char + location[0].weather[0].icon
+
+        val imageResource = context?.resources?.getIdentifier(imageName, "drawable", context?.packageName)
+
+        if (imageResource != null) {
+            binding.icon.setImageResource(imageResource)
+        }
         latitude = 0.0
         longitude = 0.0
     }

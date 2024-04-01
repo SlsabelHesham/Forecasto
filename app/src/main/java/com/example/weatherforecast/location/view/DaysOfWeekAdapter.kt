@@ -2,6 +2,8 @@ package com.example.weatherforecast.location.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -37,10 +39,18 @@ class DaysOfWeekAdapter(private val context: Context?): ListAdapter<WeatherItem,
         holder.binding.dayOfWeekTV.text = dayName
         holder.binding.windSpeed.text = currentLocation.wind.speed.toString()
 
-        if (context != null) {
+        /*if (context != null) {
             Glide.with(context)
                 .load("https://openweathermap.org/img/w/${currentLocation.weather[0].icon}.png")
                 .into(holder.binding.weekIcon)
+        }*/
+        val char = (currentLocation.weather[0].icon)[2]
+        val imageName: String =  char + currentLocation.weather[0].icon
+
+        val imageResource = context?.resources?.getIdentifier(imageName, "drawable", context.packageName)
+
+        if (imageResource != null) {
+            holder.binding.weekIcon.setImageResource(imageResource)
         }
 
     }

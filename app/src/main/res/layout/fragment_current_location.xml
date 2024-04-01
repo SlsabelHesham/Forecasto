@@ -47,15 +47,16 @@
 
             <ImageButton
                 android:id="@+id/mapLocation"
-                android:layout_width="34dp"
-                android:layout_height="25dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="16dp"
                 android:background="@android:drawable/ic_menu_mylocation"
                 android:elevation="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.419" />
+                app:layout_constraintVertical_bias="0.419"
+                tools:ignore="SpeakableTextPresentCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -64,7 +65,9 @@
         android:id="@+id/view"
         android:layout_width="380dp"
         android:layout_height="335dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/main_card"
         android:elevation="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -198,13 +201,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/image1" />
+            app:srcCompat="@drawable/d02d" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hoursRecyclerView"
         android:layout_width="380dp"
         android:layout_height="150dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -213,6 +218,9 @@
         android:id="@+id/view2"
         android:layout_width="380dp"
         android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/main_card"
         android:elevation="15dp"
         app:layout_constraintEnd_toEndOf="@+id/hoursRecyclerView"
@@ -302,6 +310,7 @@
         android:id="@+id/daysRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintStart_toStartOf="@+id/view2"
