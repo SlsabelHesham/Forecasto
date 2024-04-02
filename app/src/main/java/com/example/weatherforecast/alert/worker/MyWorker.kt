@@ -51,8 +51,11 @@ class MyWorker(private var context: Context , workerParameters: WorkerParameters
             val condition = result.body()?.list?.get(0)?.weather?.get(0)?.main
             val description = result.body()?.list?.get(0)?.weather?.get(0)?.description
 
-            showAlertDialog(context, city, date, time, condition, description)
-
+            if(alert?.type == "Notification"){
+                createNotification(context, condition.toString())
+            }else{
+                showAlertDialog(context, city, date, time, condition, description)
+            }
            // val intentt = Intent(this.context, NotificationActivity::class.java)
            // context.startActivity(intentt)
 
@@ -101,10 +104,10 @@ class MyWorker(private var context: Context , workerParameters: WorkerParameters
 
     @SuppressLint("RemoteViewLayout")
     fun createNotification(context: Context, alert: String): NotificationCompat.Builder {
-        val name = "CHANNEL Name"
+        val name = "CHANNEL_NAME"
         val description = "Description"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val channelId = "3838"
+        val channelId = "CHANNEL_ID"
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val pendingIntent = NavDeepLinkBuilder(context)
@@ -118,13 +121,11 @@ class MyWorker(private var context: Context , workerParameters: WorkerParameters
             notificationManager.createNotificationChannel(channel)
         }
 
-        val notificationLayout = RemoteViews(context.packageName, R.layout.test_notification)
-
         val builder: NotificationCompat.Builder =
             NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(android.R.color.transparent)
+                .setSmallIcon(R.drawable.notification)
                 //.setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(notificationLayout)
+                //.setCustomContentView(notificationLayout)
                 .setContentTitle(alert)
                 .setContentText("Weather is $alert")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

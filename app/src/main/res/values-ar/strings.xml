@@ -9,10 +9,32 @@
     <string name="wind_speed">سرعة الرياح</string>
     <string name="ms">م/ث</string>
     <string name="mh">م/س</string>
+    <string name="mb">م ب</string>
     <string name="language">اللغة</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
     <string name="alerts">التنبيهات</string>
-    <string name="my_favourites">تفضيلاتي</string>
+    <string name="my_favourites">المفضلة</string>
     <string name="map">الخريطة</string>
+    <string name="AM">ص</string>
+    <string name="PM">م</string>
+    <string name="NoConnection">لا يوجد إتصال بالإنترنت</string>
+    <string name="Error">خطأ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="cont">إستمرار</string>
+    <string name="AlarmSetting">إعدادات التنبيه</string>
+    <string name="notification">إشعار</string>
+    <string name="alarm">تنبيه</string>
+    <string name="save">حفظ</string>
+    <string name="future" translatable="false">الرجاء تحديد وقت في المستقبل.</string>
+    <string name="permission" translatable="false">تم رفض الإذن.</string>
+    <string name="cityName" translatable="false" />
+    <string name="duration" translatable="false" />
+    <string name="type" translatable="false" />
+    <string name="deleteAlert" translatable="false">حذف التنبيه</string>
+    <string name="deleteAlertMSG" translatable="false">هل أنت متأكد أنك تريد حذف هذا التنبيه؟</string>
+    <string name="deleteLocation" translatable="false">حذف الموقع</string>
+    <string name="deleteLocationMSG" translatable="false">هل أنت متأكد أنك تريد حذف هذا الموقع من المفضلة؟</string>
+
+
 </resources>

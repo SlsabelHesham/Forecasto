@@ -22,7 +22,7 @@ class NotificationActivity : AppCompatActivity() {
         setContentView(binding.root)
         window.decorView.rootView.setBackgroundColor(Color.TRANSPARENT)
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.weather_alert)
+        mediaPlayer = MediaPlayer.create(this, R.raw.alarmweather)
         mediaPlayer?.setLooping(true);
         mediaPlayer?.start()
         val city = intent.getStringExtra("city")

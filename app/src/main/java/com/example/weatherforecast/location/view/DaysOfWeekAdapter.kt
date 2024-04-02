@@ -2,7 +2,9 @@ package com.example.weatherforecast.location.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.DayOfWeekLayoutBinding
 import com.example.weatherforecast.model.WeatherItem
 import java.util.*
@@ -18,7 +21,10 @@ import java.util.*
 class DaysOfWeekAdapter(private val context: Context?): ListAdapter<WeatherItem, DaysOfWeekAdapter.LocationViewHolder>(LocationDiffUtils()){
 
     private lateinit var binding: DayOfWeekLayoutBinding
-
+    private lateinit var appUnits: String
+    private lateinit var windUnit: String
+    private var preferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val inflater: LayoutInflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -28,16 +34,25 @@ class DaysOfWeekAdapter(private val context: Context?): ListAdapter<WeatherItem,
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
+        getPreferences()
+        setUnits()
         val currentLocation = getItem(position)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = currentLocation.dt * 1000
         }
-        val dayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)
+        val language = preferences?.getString("language", "").toString()
+        val locale: Locale = if(language == "ar") {
+            Locale("ar")
+        }else{
+            Locale.ENGLISH
+        }
+        val dayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale)
 
         holder.binding.tempTV.text = currentLocation.main.temp.toString()
+        holder.binding.tempUnit.text = appUnits
         holder.binding.dayOfWeekTV.text = dayName
-        holder.binding.windSpeed.text = currentLocation.wind.speed.toString()
+        holder.binding.windSpeed.text = currentLocation.wind.speed.toString()+ " "+ windUnit
 
         /*if (context != null) {
             Glide.with(context)
@@ -55,6 +70,28 @@ class DaysOfWeekAdapter(private val context: Context?): ListAdapter<WeatherItem,
 
     }
 
+    private fun getPreferences(){
+        preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        editor = preferences?.edit()
+        appUnits = preferences?.getString("unit", "").toString()
+    }
+    private fun setUnits(){
+        when (appUnits) {
+            "" -> {
+                appUnits = "K"
+                windUnit = context?.getString(R.string.ms).toString()
+            }
+            "metric" -> {
+                appUnits = "°C"
+
+                windUnit = context?.getString(R.string.ms).toString()
+            }
+            else -> {
+                appUnits = "°F"
+                windUnit = context?.getString(R.string.mh).toString()
+            }
+        }
+    }
     class LocationViewHolder(var binding: DayOfWeekLayoutBinding) : RecyclerView.ViewHolder(binding.root)
 
 }

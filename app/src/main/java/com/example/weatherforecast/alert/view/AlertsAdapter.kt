@@ -1,6 +1,7 @@
 package com.example.weatherforecast.alert.view
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -46,7 +47,11 @@ class AlertsAdapter(private val listener: OnDeleteAlertClickListener , val conte
         val hourMinParts = hourMin.split(":")
         val hour = hourMinParts[0].toInt()
         val min = hourMinParts[1].toInt()
-        specificDateTime = if (amPm == "AM") {
+        specificDateTime = if (amPm == "AM" && hour == 12) {
+            LocalDateTime.of(year, month, day, 0, min)
+        } else if (hour == 12) {
+            LocalDateTime.of(year, month, day, 12, min)
+        } else if (amPm == "AM") {
             LocalDateTime.of(year, month, day, hour, min)
         } else {
             LocalDateTime.of(year, month, day, hour + 12, min)
@@ -78,7 +83,17 @@ class AlertsAdapter(private val listener: OnDeleteAlertClickListener , val conte
         }
 
         holder.binding.cancelBtn.setOnClickListener {
-            listener.onDeleteAlertClick(currentAlert)
+            AlertDialog.Builder(context)
+                .setTitle(R.string.deleteAlert)
+                .setMessage(R.string.deleteAlertMSG)
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    listener.onDeleteAlertClick(currentAlert)
+                }
+                .setNegativeButton(android.R.string.no) { _, _ ->
+
+                }
+                .setIcon(R.drawable.alarm)
+                .show()
         }
     }
 

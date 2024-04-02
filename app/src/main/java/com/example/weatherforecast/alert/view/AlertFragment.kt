@@ -3,9 +3,12 @@ package com.example.weatherforecast.alert.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.NotificationManager
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.location.Geocoder
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -31,6 +34,7 @@ import com.example.weatherforecast.alert.worker.MyWorker
 import com.example.weatherforecast.R
 import com.example.weatherforecast.alert.viewModel.AlertsViewModel
 import com.example.weatherforecast.alert.viewModel.AlertsViewModelFactory
+import com.example.weatherforecast.databinding.AlertsLayoutBinding
 import com.example.weatherforecast.databinding.FragmentAlertBinding
 import com.example.weatherforecast.dp.LocationLocalDataSourceImplementation
 import com.example.weatherforecast.model.Alert
@@ -65,6 +69,9 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
     private var unit = preferences?.getString("temperature" , "")
     private var language = preferences?.getString("language", "")
 
+    private lateinit var cityName: String
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,24 +98,41 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
         }
 
         binding.floatingActionButton.setOnClickListener {
-            val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
-            val editor = preferences?.edit()
-            editor?.putBoolean("isAlert", true)
-            editor?.apply()
+            if(isInternetEnabled()){
+                val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+                val editor = preferences?.edit()
+                editor?.putBoolean("isAlert", true)
+                editor?.apply()
 
-            val navController = Navigation.findNavController(
-                (context as Activity),
-                R.id.fragmentNavHost
-            )
-            navController.navigate(R.id.action_alertFragment_to_mapsFragment)
+                val navController = Navigation.findNavController(
+                    (context as Activity),
+                    R.id.fragmentNavHost
+                )
+                navController.navigate(R.id.action_alertFragment_to_mapsFragment)
+            }else{
+                Toast.makeText(requireContext(), getString(R.string.NoConnection), Toast.LENGTH_SHORT).show()
+            }
         }
+        binding.cancelAlert.setOnClickListener {
+            binding.alarmSettingLayout.visibility = View.INVISIBLE
+
+        }/*
+        binding.alarmSettingLayout.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            val isVisible = binding.alarmSettingLayout.visibility == View.VISIBLE
+
+            if (isVisible) {
+                val recyclerView = binding.alertsRecyclerView
+                val cancelAlert = recyclerView.findViewById<View>(R.id.cancelAlert)
+                cancelAlert.isClickable = false
+            }
+        }*/
 
         if (arguments != null) {
             latitude = arguments?.getDouble("latitude") ?: 0.0
             longitude = arguments?.getDouble("longitude") ?: 0.0
             handleUI(false)
             val currentDate = LocalDateTime.now()
-            val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
             val tomorrowDate = currentDate.plusDays(1).format(dateFormat)
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             val currentTime = LocalDateTime.now().format(timeFormat)
@@ -170,6 +194,11 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radioButton: RadioButton? = view?.findViewById(checkedId)
             typeOfAlarm = radioButton?.text.toString()
+            if(typeOfAlarm == "Alarm" || typeOfAlarm == "تنبيه"){
+                checkOverlayPermission(requireContext())
+            }else if(typeOfAlarm == "Notification" || typeOfAlarm == "إشعار"){
+                checkNotificationPermission(requireContext())
+            }
         }
         /*
         alertsViewModel.alerts.observe(this) { alerts ->
@@ -187,7 +216,7 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
                         alertsAdapter.submitList(result.data)
                     }
                     else -> {
-                        Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.Error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -207,7 +236,11 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
             val hourMinParts = hourMin.split(":")
             val hour = hourMinParts[0].toInt()
             val min = hourMinParts[1].toInt()
-            specificDateTime = if (amPm == "AM") {
+            specificDateTime = if (amPm == "AM" && hour == 12) {
+                LocalDateTime.of(year, month, day, 0, min)
+            } else if (hour == 12) {
+                LocalDateTime.of(year, month, day, 12, min)
+            } else if (amPm == "AM") {
                 LocalDateTime.of(year, month, day, hour, min)
             } else {
                 LocalDateTime.of(year, month, day, hour + 12, min)
@@ -217,15 +250,15 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
             if (specificDateTime.isBefore(currentDateTime)) {
                 Toast.makeText(
                     requireContext(),
-                    "Please Select Time In The Future.",
+                    getString(R.string.future),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                //val countryName = getAddressFromLocation(latitude, longitude)
+                getAddressFromLocation(latitude, longitude)
                 val alert = Alert(
                     latitude,
                     longitude,
-                    "countryName",
+                    cityName,
                     binding.dateET.hint.toString(),
                     binding.timeET.hint.toString(),
                     typeOfAlarm
@@ -245,6 +278,33 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
         }
 
         return binding.root
+    }
+    fun checkOverlayPermission(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(context)) {
+                // Permission is not granted
+                openOverlaySettings(context)
+            }
+        }
+    }
+
+    fun openOverlaySettings(context: Context) {
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        intent.data = Uri.parse("package:" + context.packageName)
+        context.startActivity(intent)
+    }
+    fun checkNotificationPermission(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            if (notificationManager != null && !notificationManager.isNotificationPolicyAccessGranted) {
+                openNotificationSettings(context)
+            }
+        }
+    }
+
+    fun openNotificationSettings(context: Context) {
+        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+        context.startActivity(intent)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateSecondsRemaining(dateTime: LocalDateTime): Long {
@@ -284,6 +344,18 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
         }
         return language as String
     }
+    private fun getAddressFromLocation(latitude: Double, longitude: Double) {
+        val geocoder = Geocoder(requireContext())
+        Log.i("TAG", "getAddressFromLocation: $latitude$longitude")
+        val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+        cityName = addresses?.firstOrNull()?.locality ?: "City name not found"
+    }
+    private fun isInternetEnabled(): Boolean{
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
     /*private fun getAddressFromLocation(latitude: Double, longitude: Double) : String {
         val geocoder = Geocoder(requireContext())
         val addresses = geocoder.getFromLocation(latitude, longitude, 1)
@@ -294,7 +366,6 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-       // scheduleWorkIfPermissionGranted()
 
     }
 
@@ -372,7 +443,7 @@ class AlertFragment : Fragment(), OnDeleteAlertClickListener {
             if (isNotificationPermissionGranted()) {
                 //startWorker()
             } else {
-                Toast.makeText(requireContext() , "Permission is denied" , Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext() , getString(R.string.permission) , Toast.LENGTH_SHORT).show()
              }
         }
     }

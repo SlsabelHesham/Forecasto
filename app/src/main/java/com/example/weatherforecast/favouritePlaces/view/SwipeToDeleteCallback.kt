@@ -28,8 +28,8 @@ class SwipeToDeleteCallback(private val adapter: FavouritePlacesAdapter, private
         val currentPlace = adapter.currentList[position]
 
         AlertDialog.Builder(adapter.context)
-            .setTitle("Delete Location")
-            .setMessage("Are you sure you want to delete this location from your favourites?")
+            .setTitle(R.string.deleteLocation)
+            .setMessage(R.string.deleteLocationMSG)
             .setPositiveButton(android.R.string.yes) { _, _ ->
                 favouritePlacesViewModel.deletePlace(currentPlace)
             }

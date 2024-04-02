@@ -2,6 +2,7 @@ package com.example.weatherforecast.favouritePlaces.view
 
 import android.app.Activity
 import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -69,13 +70,19 @@ class FavouritesFragment : Fragment(), OnDeletePlaceClickListener {
         itemTouchHelper.attachToRecyclerView(binding.favRecyclerView)
 
         binding.floatingActionButton.setOnClickListener{
-            val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
-            val editor = preferences?.edit()
-            editor?.putBoolean("isFavourite", true)
-            editor?.apply()
+            if(isInternetEnabled()) {
+                val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+                val editor = preferences?.edit()
+                editor?.putBoolean("isFavourite", true)
 
-            val navController = Navigation.findNavController((context as Activity), R.id.fragmentNavHost)
-            navController.navigate(R.id.action_favouritesFragment_to_mapsFragment)
+                editor?.apply()
+
+                val navController =
+                    Navigation.findNavController((context as Activity), R.id.fragmentNavHost)
+                navController.navigate(R.id.action_favouritesFragment_to_mapsFragment)
+            }else{
+                Toast.makeText(context, getString(R.string.NoConnection), Toast.LENGTH_SHORT).show()
+            }
         }
         /*
         favouritePlacesViewModel.places.observe(this) { places ->
@@ -118,5 +125,11 @@ class FavouritesFragment : Fragment(), OnDeletePlaceClickListener {
 
     override fun onDeletePlaceClick(favouriteLocation: FavouriteLocation) {
         favouritePlacesViewModel.deletePlace(favouriteLocation)
+    }
+    private fun isInternetEnabled(): Boolean{
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

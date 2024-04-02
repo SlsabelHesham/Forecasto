@@ -2,12 +2,14 @@ package com.example.weatherforecast.location.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.HoursOfDayLayoutBinding
 import com.example.weatherforecast.model.WeatherItem
 import java.util.*
@@ -16,6 +18,7 @@ import java.util.*
 class HoursOfDayAdapter(private val context: Context?): ListAdapter<WeatherItem, HoursOfDayAdapter.LocationViewHolder>(LocationDiffUtil()){
 
     private lateinit var binding: HoursOfDayLayoutBinding
+    private lateinit var appUnits: String
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
@@ -27,15 +30,16 @@ class HoursOfDayAdapter(private val context: Context?): ListAdapter<WeatherItem,
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         val currentLocation = getItem(position)
-
+        getPreferences()
+        setUnits()
         val calendar = Calendar.getInstance().apply {
             timeInMillis = currentLocation.dt * 1000
         }
         val hour = calendar.get(Calendar.HOUR)
-        val amPm = if (calendar.get(Calendar.AM_PM) == Calendar.AM) "AM" else "PM"
+        val amPm = if (calendar.get(Calendar.AM_PM) == Calendar.AM) context?.getString(R.string.AM) else context?.getString(R.string.PM)
 
 
-        holder.binding.tempTV.text = currentLocation.main.temp.toString()
+        holder.binding.tempTV.text = currentLocation.main.temp.toString() + appUnits
         holder.binding.hourTV.text = "$hour $amPm"
 
         /*
@@ -54,9 +58,29 @@ class HoursOfDayAdapter(private val context: Context?): ListAdapter<WeatherItem,
         }
     }
 
+    private fun getPreferences(){
+        val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        val editor = preferences?.edit()
+        appUnits = preferences?.getString("unit", "").toString()
+    }
+    private fun setUnits(){
+        when (appUnits) {
+            "" -> {
+                appUnits = "K"
+            }
+            "metric" -> {
+                appUnits = "°C"
+            }
+            else -> {
+                appUnits = "°F"
+            }
+        }
+    }
+
     class LocationViewHolder(var binding: HoursOfDayLayoutBinding) : RecyclerView.ViewHolder(binding.root)
 
 }
+
 
 class LocationDiffUtil : DiffUtil.ItemCallback<WeatherItem>(){
     override fun areItemsTheSame(oldItem: WeatherItem, newItem: WeatherItem): Boolean {

@@ -1,6 +1,7 @@
 package com.example.weatherforecast.settings.view
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,24 +21,30 @@ import java.util.*
 @Suppress("DEPRECATION")
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
-
+    private var preferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
-        val preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
-        val editor = preferences?.edit()
-
+        preferences = context?.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        editor = preferences?.edit()
+        setUnitsState()
+        setLanguageState()
 
         binding.languageRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radioButton: RadioButton? = view?.findViewById(checkedId)
             lifecycleScope.launch {
                 if (radioButton?.text == getString(R.string.arabic)) {
                     AppLanguageManager.updateAppLanguage(LANG_ARABIC)
+                    editor?.putString("language", LANG_ARABIC)
+                    editor?.apply()
                     convertSettingLanguage(binding)
                 } else {
                     AppLanguageManager.updateAppLanguage(LANG_ENGLISH)
+                    editor?.putString("language", LANG_ENGLISH)
+                    editor?.apply()
                     convertSettingLanguage(binding)
                 }
             }
@@ -103,6 +110,26 @@ class SettingFragment : Fragment() {
 
         suspend fun updateAppLanguage(language: String) {
             _selectedLanguage.emit(language)
+        }
+    }
+    private fun setUnitsState(){
+        if (preferences?.getString("unit", "").toString() == "imperial"){
+            binding.fahrenheitRBtn.isChecked = true
+            binding.mhRBtn.isChecked = true
+        }else if(preferences?.getString("unit", "").toString() == "metric"){
+            binding.celsiusRBtn.isChecked = true
+            binding.msRBtn.isChecked = true
+        }else{
+            binding.kelvinRBtn.isChecked = true
+            binding.msRBtn.isChecked = true
+        }
+    }
+    private fun setLanguageState(){
+        if(preferences?.getString("language", "").toString() == "ar"){
+            binding.arabicRBtn.isChecked = true
+        }
+        else{
+            binding.englishRBtn.isChecked = true
         }
     }
 }

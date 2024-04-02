@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingEnd="5dp">
 
     <View
         android:id="@+id/view4"
@@ -13,7 +14,6 @@
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/main_card"
-        android:elevation="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/hourTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:elevation="15dp"
         android:fontFamily="@font/aleo"
         android:gravity="center"
@@ -64,7 +64,7 @@
             android:gravity="center"
             android:text="16"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -72,9 +72,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="@font/aleo"
-            android:text="°C"
             android:textColor="@color/white"
-            android:textSize="34sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </LinearLayout>

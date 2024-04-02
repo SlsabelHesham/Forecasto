@@ -37,7 +37,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/imageView3"
+                    android:id="@+id/cancelAlert"
                     android:layout_width="43dp"
                     android:layout_height="37dp"
                     android:layout_marginTop="12dp"
